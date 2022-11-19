@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 from glob import glob
 from torch.utils import data
+import torchvision.transforms as transforms
 
 
 class NICODataset(data.Dataset):
@@ -13,7 +14,6 @@ class NICODataset(data.Dataset):
         super().__init__()
         self.image_path_list = image_path_list
         self.transform = transform
-        print(os.getcwd())
         with open(label_map_json, "r") as f:
             self.label_map = json.load(f)
 
@@ -73,6 +73,10 @@ class NICOTestDataset(data.Dataset):
 
 
 if __name__ == '__main__':
-    for x, y in build_dataset(1, "datasets/NICO++", 0, lambda x: x, lambda x: x,0)[0]:
+    trans = [transforms.RandomHorizontalFlip(),
+                                              # transforms.CenterCrop(148), #2048 with, 4096 without...
+                                              transforms.Resize(512),
+                                              transforms.ToTensor(),]
+    for x, y in build_dataset(1, "datasets/NICO++", 0, trans, trans,0)[0]:
         plt.imshow(x)
         plt.show()
