@@ -16,7 +16,9 @@ class NICODataset(data.Dataset):
         self.transform = transform
         with open(label_map_json, "r") as f:
             self.label_map = json.load(f)
-
+        context_path = os.path.join(*image_path_list[0].split("/")[:-3])
+        contexts = os.listdir(context_path)
+        self.context_map = dict(zip(contexts, range(len(contexts))))
     def __len__(self):
         return len(self.image_path_list)
 
@@ -25,7 +27,7 @@ class NICODataset(data.Dataset):
         image = Image.open(image_path)
         image = self.transform(image)
         label = self._get_label_index(image_path)
-        return image, label
+        return image, label, self.context_map[image_path.split("/")[-3]]
 
     def _get_label_index(self, image_path):
         class_name = image_path.split("/")[-2]
@@ -46,6 +48,8 @@ def build_dataset(use_track, root, val_ratio, train_transform, val_transform, se
         )
         label_map_json = os.path.join(track_data_dir, "ood_label_id_mapping.json")
         image_path_list = glob(f"{data_dir}/*/*.jpg")
+    if val_ratio==0:
+        return NICODataset(image_path_list, label_map_json, train_transform), NICODataset(image_path_list, label_map_json, train_transform)
 
     np.random.RandomState(seed).shuffle(image_path_list)
     n = round((len(image_path_list) * val_ratio) / 2) * 2

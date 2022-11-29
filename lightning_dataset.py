@@ -10,7 +10,7 @@ from torchvision import transforms
 from torchvision.datasets import CelebA
 from torchvision.datasets import ImageFolder
 import zipfile
-from utils.general import check_dataset, colorstr
+from vae.utils.general import check_dataset, colorstr
 from domain_datasets import build_dataset
 
 class VAEDataset(LightningDataModule):
@@ -61,7 +61,8 @@ class VAEDataset(LightningDataModule):
                                             transforms.ToTensor(),])
 
         self.train_dataset, self.val_dataset = build_dataset(1, "datasets/NICO++", 0, train_transforms, val_transforms,0)
-
+        print(len(self.train_dataset))
+        print(len(self.val_dataset))
         # Replace CelebA with your dataset
 #       ===============================================================
         
