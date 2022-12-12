@@ -1,3 +1,0 @@
-[submodule "pytorch-lightning-gans"]
-	path = pytorch-lightning-gans
-	url = https://github.com/nocotan/pytorch-lightning-gans.git
