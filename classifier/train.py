@@ -21,6 +21,7 @@ from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
+from classifier.resnetclassifier import ResNetClassifier
 
 
 # Here we define a new class to turn the ResNet model that we want to use as a feature extractor

@@ -72,7 +72,7 @@ class FeatureOODSplitter:
         self.dataset = dataset
         assert len(split) == 3, "split must be threefold, [%training data, %validaation data, %test data]"
         nc = len((os.listdir("datasets/NICO++/track_1/public_dg_0416/train/autumn")))
-        model = ResNetClassifier.load_from_checkpoint("lightning_logs/version_2/checkpoints/epoch=4-step=399900.ckpt",num_classes = nc, resnet_version=34, gpus=[0])
+        model = ResNetClassifier.load_from_checkpoint("lightning_logs/version_0/checkpoints/epoch=19-step=1599600.ckpt",num_classes = nc, resnet_version=34, gpus=[0])
         newmodel = torch.nn.Sequential(*(list(model.resnet_model.children())[:-1])).cuda()
         self.features = np.zeros((len(dataset), 512))
         contexts = np.zeros((len(dataset), 1))
@@ -87,12 +87,12 @@ class FeatureOODSplitter:
                 classes[i]=int(y)
         clustering = KMeans(10)
         self.folds = clustering.fit_predict(self.features)
-        # pca = TSNE(2)
-        # transformed = pca.fit_transform(features)
-        # plt.scatter(transformed[:, 0], transformed[:,1], c=contexts, cmap="viridis")
-        # plt.show()
-        # plt.scatter(transformed[:, 0], transformed[:, 1], c=classes, cmap="viridis")
-        # plt.show()
+        pca = TSNE(2)
+        transformed = pca.fit_transform(self.features)
+        plt.scatter(transformed[:, 0], transformed[:,1], c=contexts, cmap="viridis")
+        plt.show()
+        plt.scatter(transformed[:, 0], transformed[:, 1], c=classes, cmap="viridis")
+        plt.show()
 
     def get_trainloader(self):
         indices = np.arange(len(self.dataset))[self.folds>1]
